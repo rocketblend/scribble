@@ -7,7 +7,6 @@ import (
 	"github.com/rocketblend/scribble"
 )
 
-// a fish
 type Fish struct{ Name string }
 
 func main() {
@@ -45,14 +44,13 @@ func main() {
 		fishies = append(fishies, fishFound)
 	}
 
-	// // Delete a fish from the database
-	// if err := db.Delete("fish", "onefish"); err != nil {
-	// 	fmt.Println("Error", err)
-	// }
-	//
-	// // Delete all fish from the database
-	// if err := db.Delete("fish", ""); err != nil {
-	// 	fmt.Println("Error", err)
-	// }
+	// Delete a fish from the database
+	if err := db.Delete("fish", "onefish"); err != nil {
+		fmt.Println("Error", err)
+	}
 
+	// Delete all fish from the database
+	if err := db.Delete("fish", ""); err != nil {
+		fmt.Println("Error", err)
+	}
 }
