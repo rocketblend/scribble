@@ -23,7 +23,9 @@ func New(dir string, options *Options) (*Driver, error) {
 
 	// if no logger is provided, create a default
 	if opts.Logger == nil {
-		opts.Logger = logrus.New()
+		l := logrus.New()
+		l.Level = logrus.InfoLevel
+		opts.Logger = l
 	}
 
 	//

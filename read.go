@@ -3,7 +3,7 @@ package scribble
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -26,13 +26,13 @@ func (d *Driver) Read(collection, resource string, v interface{}) error {
 	}
 
 	// read record from database
-	b, err := ioutil.ReadFile(record + ".json")
+	b, err := os.ReadFile(record + ".json")
 	if err != nil {
 		return err
 	}
 
 	// unmarshal data
-	return json.Unmarshal(b, &v)
+	return json.Unmarshal(b, v)
 }
 
 // ReadAll records from a collection; this is returned as a slice of strings because
@@ -51,7 +51,7 @@ func (d *Driver) ReadAll(collection string) ([]string, error) {
 
 	// read all the files in the transaction.Collection; an error here just means
 	// the collection is either empty or doesn't exist
-	files, _ := ioutil.ReadDir(dir)
+	files, _ := os.ReadDir(dir)
 
 	// the files read from the database
 	var records []string
@@ -59,7 +59,7 @@ func (d *Driver) ReadAll(collection string) ([]string, error) {
 	// iterate over each of the files, attempting to read the file. If successful
 	// append the files to the collection of read files
 	for _, file := range files {
-		b, err := ioutil.ReadFile(filepath.Join(dir, file.Name()))
+		b, err := os.ReadFile(filepath.Join(dir, file.Name()))
 		if err != nil {
 			return nil, err
 		}
