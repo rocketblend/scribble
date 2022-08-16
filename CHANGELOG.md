@@ -1,6 +1,6 @@
 # Changelog
 
-# v1.0.0
+# v1.1.0
 
 Forked from [link](https://github.com/nanobox-io/golang-scribble)
 
@@ -12,6 +12,7 @@ Forked from [link](https://github.com/nanobox-io/golang-scribble)
 * Split code into sub files.
 * Added `CHANGELOG.md` file
 * Added `Makefile` file.
+* Added simple race condition test.
 
 **Other**
 * Updated LICENSE
