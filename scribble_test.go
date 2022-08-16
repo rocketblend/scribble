@@ -1,16 +1,16 @@
 package scribble
 
 import (
+	"fmt"
 	"os"
+	"sync"
 	"testing"
 )
 
-//
 type Fish struct {
 	Type string `json:"type"`
 }
 
-//
 var (
 	db         *Driver
 	database   = "./deep/school"
@@ -21,7 +21,6 @@ var (
 	bluefish   = Fish{Type: "blue"}
 )
 
-//
 func TestMain(m *testing.M) {
 
 	// remove any thing for a potentially failed previous test
@@ -62,7 +61,6 @@ func TestNew(t *testing.T) {
 	}
 }
 
-//
 func TestWriteAndRead(t *testing.T) {
 
 	createDB()
@@ -85,7 +83,6 @@ func TestWriteAndRead(t *testing.T) {
 	destroySchool()
 }
 
-//
 func TestReadall(t *testing.T) {
 
 	createDB()
@@ -103,7 +100,6 @@ func TestReadall(t *testing.T) {
 	destroySchool()
 }
 
-//
 func TestWriteAndReadEmpty(t *testing.T) {
 
 	createDB()
@@ -126,7 +122,6 @@ func TestWriteAndReadEmpty(t *testing.T) {
 	destroySchool()
 }
 
-//
 func TestDelete(t *testing.T) {
 
 	createDB()
@@ -149,7 +144,6 @@ func TestDelete(t *testing.T) {
 	destroySchool()
 }
 
-//
 func TestDeleteall(t *testing.T) {
 
 	createDB()
@@ -166,7 +160,46 @@ func TestDeleteall(t *testing.T) {
 	destroySchool()
 }
 
-//
+func TestWriteRaceCondition(t *testing.T) {
+	createDB()
+
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < 20; i++ {
+			if err1 := db.Write(collection, fmt.Sprintf("num%v", i), fmt.Sprintf("%v", i)); err1 != nil {
+				t.Error("Failed to write: ", err1.Error())
+				return
+			}
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		for i := 0; i < 20; i++ {
+			if err1 := db.Write(collection, fmt.Sprintf("num%v", i), fmt.Sprintf("%v", i)); err1 != nil {
+				t.Error(err1)
+				return
+			}
+		}
+	}()
+
+	wg.Wait()
+
+	fishes, err := db.ReadAll(collection)
+	if err != nil {
+		t.Error("Failed to read: ", err.Error())
+	}
+
+	if len(fishes) != 20 {
+		t.Fatalf("Expected 20 entries but found %v", len(fishes))
+	}
+
+	destroySchool()
+}
 
 // create a new scribble database
 func createDB() error {
