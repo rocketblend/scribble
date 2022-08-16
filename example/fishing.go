@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	scribble "github.com/nanobox-io/golang-scribble"
+	"github.com/rocketblend/scribble"
 )
 
 // a fish
